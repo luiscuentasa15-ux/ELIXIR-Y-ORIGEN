@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elixir & Origen | Licorería Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --gold-primary: #D4AF37;
+            --gold-light: #F4E8C1;
+            --gold-dark: #AA8C2C;
+            --black-rich: #0a0a0a;
+            --charcoal: #1a1a1a;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--black-rich);
+            color: #f5f5f5;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, .font-display {
+            font-family: 'Cinzel', serif;
+        }
+        
+        .text-gold {
+            color: var(--gold-primary);
+        }
+        
+        .bg-gold {
+            background-color: var(--gold-primary);
+        }
+        
+        .border-gold {
+            border-color: var(--gold-primary);
+        }
+        
+        /* Grain texture overlay */
+        .texture-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--black-rich);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold-dark);
+            border-radius: 4px;
+        }
+        
+        /* Navigation hover effect */
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--gold-primary);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            transform: translateX(0);
+        }
+        
+        /* Hero video background */
+        .hero-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.4);
+        }
+        
+        /* Product card 3D effect */
+        .product-card {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 25px 50px -12px rgba(212, 175, 55, 0.25);
+        }
+        
+        /* Magnetic button effect */
+        .magnetic-btn {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Parallax sections */
+        .parallax-bg {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        
+        /* Loading animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--black-rich);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+        
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loader-text {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--gold-primary);
+            letter-spacing: 0.5em;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Text reveal animation */
+        .reveal-text {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+        }
+        
+        /* Gold gradient text */
+        .text-gradient-gold {
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-primary) 50%, var(--gold-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Image hover zoom */
+        .img-zoom {
+            overflow: hidden;
+        }
+        
+        .img-zoom img {
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .img-zoom:hover img {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="loader-text">ELIXIR & ORIGEN</div>
+    </div>
+
+    <!-- Texture Overlay -->
+    <div class="texture-overlay"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-40 transition-all duration-300" id="navbar">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-md border-b border-white/10"></div>
+        <div class="container mx-auto px-6 py-4 relative">
+            <div class="flex justify-between items-center">
+                <a href="#" class="text-2xl font-display font-bold text-gradient-gold tracking-widest">
+                    ELIXIR & ORIGEN
+                </a>
+                
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#coleccion" class="nav-link text-sm tracking-widest uppercase text-gray-300 hover:text-gold transition-colors">Colección</a>
+                    <a href="#experiencias" class="nav-link text-sm tracking-widest uppercase text-gray-300 hover:text-gold transition-colors">Experiencias</a>
+                    <a href="#maestria" class="nav-link text-sm tracking-widest uppercase text-gray-300 hover:text-gold transition-colors">Maestría</a>
+                    <a href="#contacto" class="magnetic-btn px-6 py-2 border border-gold text-gold hover:bg-gold hover:text-black transition-all duration-300 text-sm tracking-widest uppercase">
+                        Reservar
+                    </a>
+                </div>
+
+                <button class="md:hidden text-gold" onclick="toggleMenu()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="md:hidden hidden bg-black/95 backdrop-blur-xl border-t border-white/10" id="mobileMenu">
+            <div class="flex flex-col p-6 space-y-4">
+                <a href="#coleccion" class="text-gray-300 hover:text-gold transition-colors tracking-widest uppercase text-sm">Colección</a>
+                <a href="#experiencias" class="text-gray-300 hover:text-gold transition-colors tracking-widest uppercase text-sm">Experiencias</a>
+                <a href="#maestria" class="text-gray-300 hover:text-gold transition-colors tracking-widest uppercase text-sm">Maestría</a>
+                <a href="#contacto" class="text-gold tracking-widest uppercase text-sm">Reservar</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+        <video class="hero-video" autoplay muted loop playsinline>
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-pouring-a-drink-into-a-glass-with-ice-4286-large.mp4" type="video/mp4">
+        </video>
+        
+        <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/90"></div>
+        
+        <div class="relative z-10 text-center px-6 max-w-5xl mx-auto">
+            <p class="text-gold tracking-[0.3em] text-sm mb-4 opacity-0 translate-y-10" id="hero-subtitle">ESTABLECIDA EN 1924</p>
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-display font-bold mb-6 leading-tight opacity-0 translate-y-10" id="hero-title">
+                <span class="block text-white">El Arte de</span>
+                <span class="block text-gradient-gold">Lo Extraordinario</span>
+            </h1>
+            <p class="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 font-light opacity-0 translate-y-10" id="hero-desc">
+                Descubra nuestra colección curada de los espíritus más excepcionales del mundo, 
+                donde cada botella cuenta una historia de legado y perfección.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center opacity-0 translate-y-10" id="hero-cta">
+                <a href="#coleccion" class="magnetic-btn px-8 py-4 bg-gold text-black font-semibold tracking-widest uppercase hover:bg-white transition-all duration-300">
+                    Explorar Colección
+                </a>
+                <a href="#experiencias" class="magnetic-btn px-8 py-4 border border-white/30 text-white hover:border-gold hover:text-gold transition-all duration-300 tracking-widest uppercase">
+                    Experiencias Privadas
+                </a>
+            </div>
+        </div>
+
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Heritage Section -->
+    <section class="py-24 md:py-32 relative overflow-hidden" id="maestria">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="order-2 md:order-1 relative">
+                    <div class="absolute -inset-4 bg-gradient-to-r from-gold/20 to-transparent blur-3xl"></div>
+                    <div class="relative img-zoom rounded-sm overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=800&auto=format&fit=crop&q=80" 
+                             alt="Maestro destilador" 
+                             class="w-full h-[600px] object-cover grayscale hover:grayscale-0 transition-all duration-700">
+                        <div class="absolute inset-0 border border-gold/30 pointer-events-none"></div>
+                    </div>
+                    <div class="absolute -bottom-6 -right-6 w-48 h-48 border border-gold/30 bg-black/90 p-6 flex flex-col justify-center">
+                        <span class="text-4xl font-display text-gold mb-2">99</span>
+                        <span class="text-xs tracking-widest uppercase text-gray-400">Años de<br>Excelencia</span>
+                    </div>
+                </div>
+                
+                <div class="order-1 md:order-2 space-y-8">
+                    <div class="space-y-2">
+                        <p class="text-gold tracking-[0.3em] text-sm uppercase">Nuestra Herencia</p>
+                        <h2 class="text-4xl md:text-5xl font-display font-bold text-white leading-tight">
+                            Tres Generaciones de<br>
+                            <span class="text-gradient-gold">Perfección</span>
+                        </h2>
+                    </div>
+                    
+                    <p class="text-gray-400 leading-relaxed text-lg">
+                        Desde 1924, hemos seleccionado meticulosamente los espíritus más excepcionales del mundo. 
+                        Nuestro compromiso con la excelencia nos ha llevado a establecer relaciones exclusivas 
+                        con las destilerías más prestigiosas de Escocia, Francia y el Caribe.
+                    </p>
+                    
+                    <p class="text-gray-400 leading-relaxed">
+                        Cada botella en nuestra colección ha sido elegida por nuestros maestros catadores 
+                        por su carácter único, complejidad aromática y potencial de envejecimiento. 
+                        No vendemos simplemente bebidas; ofrecemos piezas de historia líquida.
+                    </p>
+
+                    <div class="grid grid-cols-3 gap-8 pt-8 border-t border-white/10">
+                        <div>
+                            <span class="block text-3xl font-display text-gold mb-1">500+</span>
+                            <span class="text-xs text-gray-500 uppercase tracking-wider">Botellas Únicas</span>
+                        </div>
+                        <div>
+                            <span class="block text-3xl font-display text-gold mb-1">12</span>
+                            <span class="text-xs text-gray-500 uppercase tracking-wider">Países</span>
+                        </div>
+                        <div>
+                            <span class="block text-3xl font-display text-gold mb-1">∞</span>
+                            <span class="text-xs text-gray-500 uppercase tracking-wider">Pasión</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Collection -->
+    <section class="py-24 bg-charcoal relative" id="coleccion">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 space-y-4">
+                <p class="text-gold tracking-[0.3em] text-sm uppercase">Selección Curada</p>
+                <h2 class="text-4xl md:text-6xl font-display font-bold text-white">Colección Privada</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    Ediciones limitadas y añadas excepcionales disponibles exclusivamente para nuestros miembros.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Product 1 -->
+                <div class="product-card group bg-black border border-white/10 p-6 relative overflow-hidden">
+                    <div class="absolute top-4 right-4 z-10">
+                        <span class="bg-gold text-black text-xs px-3 py-1 uppercase tracking-wider font-semibold">Edición Limitada</span>
+                    </div>
+                    <div class="h-80 flex items-center justify-center mb-6 relative">
+                        <div class="absolute inset-0 bg-gradient-to-t from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <img src="https://images.unsplash.com/photo-1527281400683-1aae777175f8?w=400&auto=format&fit=crop&q=80" 
+                             alt="Whisky Premium" 
+                             class="h-full object-contain drop-shadow-2xl transform group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-gold text-xs tracking-widest uppercase">Single Malt • 25 Años</p>
+                        <h3 class="text-xl font-display text-white group-hover:text-gold transition-colors">Macallan Rare Cask</h3>
+                        <p class="text-gray-500 text-sm">Notas de roble ahumado, vainilla y frutos secos. Solo 150 botellas disponibles.</p>
+                        <div class="pt-4 flex justify-between items-center border-t border-white/10 mt-4">
+                            <span class="text-2xl font-display text-white">€890</span>
+                            <button class="text-gold hover:text-white transition-colors text-sm tracking-widest uppercase flex items-center gap-2">
+                                Añadir 
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card group bg-black border border-white/10 p-6 relative overflow-hidden">
+                    <div class="h-80 flex items-center justify-center mb-6 relative">
+                        <div class="absolute inset-0 bg-gradient-to-t from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <img src="https://images.unsplash.com/photo-1585553616435-2dc0a54e271d?w=400&auto=format&fit=crop&q=80" 
+                             alt="Cognac" 
+                             class="h-full object-contain drop-shadow-2xl transform group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-gold text-xs tracking-widest uppercase">Cognac • XO</p>
+                        <h3 class="text-xl font-display text-white group-hover:text-gold transition-colors">Rémy Martin Louis XIII</h3>
+                        <p class="text-gray-500 text-sm">Mezcla de 1,200 eaux-de-vie de hasta 100 años. Cristal Baccarat.</p>
+                        <div class="pt-4 flex justify-between items-center border-t border-white/10 mt-4">
+                            <span class="text-2xl font-display text-white">€2,400</span>
+                            <button class="text-gold hover:text-white transition-colors text-sm tracking-widest uppercase flex items-center gap-2">
+                                Añadir 
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="product-card group bg-black border border-white/10 p-6 relative overflow-hidden">
+                    <div class="absolute top-4 right-4 z-10">
+                        <span class="bg-white/10 text-white text-xs px-3 py-1 uppercase tracking-wider">Nuevo Ingreso</span>
+                    </div>
+                    <div class="h-80 flex items-center justify-center mb-6 relative">
+                        <div class="absolute inset-0 bg-gradient-to-t from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <img src="https://images.unsplash.com/photo-1614313511387-1436b2f0c254?w=400&auto=format&fit=crop&q=80" 
+                             alt="Ron Premium" 
+                             class="h-full object-contain drop-shadow-2xl transform group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-gold text-xs tracking-widest uppercase">Ron • 21 Años</p>
+                        <h3 class="text-xl font-display text-white group-hover:text-gold transition-colors">Dictador Generations</h3>
+                        <p class="text-gray-500 text-sm">Envejecido en barricas de sherry Oloroso. Edición numerada.</p>
+                        <div class="pt-4 flex justify-between items-center border-t border-white/10 mt-4">
+                            <span class="text-2xl font-display text-white">€650</span>
+                            <button class="text-gold hover:text-white transition-colors text-sm tracking-widest uppercase flex items-center gap-2">
+                                Añadir 
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <a href="#" class="inline-flex items-center gap-2 text-gold hover:text-white transition-colors tracking-widest uppercase text-sm border-b border-gold pb-1 hover:border-white">
+                    Ver Colección Completa
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experiences Section -->
+    <section class="py-24 relative overflow-hidden" id="experiencias">
+        <div class="absolute inset-0 parallax-bg" style="background-image: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=1920&auto=format&fit=crop&q=80');">
+            <div class="absolute inset-0 bg-black/80"></div>
+        </div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="max-w-4xl mx-auto text-center mb-16">
+                <p class="text-gold tracking-[0.3em] text-sm uppercase mb-4">Experiencias Exclusivas</p>
+                <h2 class="text-4xl md:text-6xl font-display font-bold text-white mb-6">Más Allá del Vaso</h2>
+                <p class="text-gray-300 text-lg">
+                    Sumérjase en el mundo de los espíritus premium a través de nuestras experiencias 
+                    diseñadas para los verdaderos conocedores.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="group relative overflow-hidden border border-white/10 bg-black/50 backdrop-blur-sm p-8 hover:border-gold/50 transition-colors duration-300">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <svg class="w-24 h-24 text-gold" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-display text-white mb-4 group-hover:text-gold transition-colors">Catas Privadas</h3>
+                    <p class="text-gray-400 mb-6">
+                        Sesiones íntimas guiadas por nuestros maestros catadores. Incluye degustación 
+                        de 5 etiquetas premium maridadas con chocolate artesanal.
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-500 mb-8">
+                        <li class="flex items-center gap-2">
+                            <span class="w-1 h-1 bg-gold rounded-full"></span>
+                            Grupos de máximo 8 personas
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-1 h-1 bg-gold rounded-full"></span>
+                            Duración: 2 horas
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-1 h-1 bg-gold rounded-full"></span>
+                            Incluye certificado de participación
+                        </li>
+                    </ul>
+                    <button class="text-gold hover:text-white transition-colors tracking-widest uppercase text-sm flex items-center gap-2">
+                        Reservar Experiencia
+                        <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="group relative overflow-hidden border border-white/10 bg-black/50 backdrop-blur-sm p-8 hover:border-gold/50 transition-colors duration-300">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <svg class="w-24 h-24 text-gold" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.93-9h.03c.55 0 1-.45 1-1s-.45-1-1-1c-1.24 0-2.31.73-2.89 1.79-.25.46-.11 1.03.34 1.27.45.25 1.02.11 1.27-.34.28-.52.82-.86 1.42-.86l.83.01z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-display text-white mb-4 group-hover:text-gold transition-colors">Acceso a la Bóveda</h3>
+                    <p class="text-gray-400 mb-6">
+                        Visita exclusiva a nuestra bóveda subterránea donde reposan nuestras piezas 
+                        más preciadas. Oportunidad de adquirir botellas fuera de catálogo.
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-500 mb-8">
+                        <li class="flex items-center gap-2">
+                            <span class="w-1 h-1 bg-gold rounded-full"></span>
+                            Solo miembros Platinum
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-1 h-1 bg-gold rounded-full"></span>
+                            Incluye cena maridaje de 7 tiempos
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-1 h-1 bg-gold rounded-full"></span>
+                            Acompañamiento de sumiller
+                        </li>
+                    </ul>
+                    <button class="text-gold hover:text-white transition-colors tracking-widest uppercase text-sm flex items-center gap-2">
+                        Solicitar Acceso
+                        <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Membership Section -->
+    <section class="py-24 bg-black border-t border-white/10">
+        <div class="container mx-auto px-6">
+            <div class="max-w-3xl mx-auto text-center space-y-8">
+                <h2 class="text-3xl md:text-5xl font-display font-bold text-white">
+                    Únase al <span class="text-gradient-gold">Círculo</span>
+                </h2>
+                <p class="text-gray-400 text-lg">
+                    Membresía exclusiva con acceso prioritario a ediciones limitadas, 
+                    invitaciones a eventos privados y asesoría personalizada de nuestros expertos.
+                </p>
+                
+                <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto mt-8" onsubmit="event.preventDefault(); alert('Gracias por su interés. Nos pondremos en contacto pronto.');">
+                    <input type="email" 
+                           placeholder="Su correo electrónico" 
+                           class="flex-1 px-6 py-4 bg-white/5 border border-white/20 text-white placeholder-gray-500 focus:outline-none focus:border-gold transition-colors"
+                           required>
+                    <button type="submit" 
+                            class="px-8 py-4 bg-gold text-black font-semibold tracking-widest uppercase hover:bg-white transition-all duration-300 whitespace-nowrap">
+                        Solicitar
+                    </button>
+                </form>
+                
+                <p class="text-xs text-gray-600">
+                    Al unirse, acepta nuestra política de privacidad. Solo contactamos con propósitos exclusivos.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-charcoal border-t border-white/10 pt-16 pb-8" id="contacto">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="space-y-4">
+                    <h4 class="text-2xl font-display font-bold text-gradient-gold">ELIXIR & ORIGEN</h4>
+                    <p class="text-gray-500 text-sm leading-relaxed">
+                        Casa fundada en 1924 dedicada a la selección y distribución 
+                        de los espíritus más excepcionales del mundo.
+                    </p>
+                    <div class="flex space-x-4 pt-4">
+                        <a href="#" class="w-10 h-10 border border-white/20 flex items-center justify-center text-gray-400 hover:border-gold hover:text-gold transition-all">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 border border-white/20 flex items-center justify-center text-gray-400 hover:border-gold hover:text-gold transition-all">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h5 class="text-white font-semibold mb-4 tracking-widest uppercase text-sm">Explorar</h5>
+                    <ul class="space-y-2 text-gray-500 text-sm">
+                        <li><a href="#" class="hover:text-gold transition-colors">Colección Whisky</a></li>
+                        <li><a href="#" class="hover:text-gold transition-colors">Cognacs</a></li>
+                        <li><a href="#" class="hover:text-gold transition-colors">Rones Premium</a></li>
+                        <li><a href="#" class="hover:text-gold transition-colors">Ediciones Limitadas</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h5 class="text-white font-semibold mb-4 tracking-widest uppercase text-sm">Servicios</h5>
+                    <ul class="space-y-2 text-gray-500 text-sm">
+                        <li><a href="#" class="hover:text-gold transition-colors">Catas Privadas</a></li>
+                        <li><a href="#" class="hover:text-gold transition-colors">Asesoría de Colección</a></li>
+                        <li><a href="#" class="hover:text-gold transition-colors">Eventos Corporativos</a></li>
+                        <li><a href="#" class="hover:text-gold transition-colors">Envíos Internacionales</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h5 class="text-white font-semibold mb-4 tracking-widest uppercase text-sm">Contacto</h5>
+                    <ul class="space-y-2 text-gray-500 text-sm">
+                        <li class="flex items-start gap-2">
+                            <span class="text-gold">📍</span>
+                            Calle Serrano 45, Madrid 28006
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-gold">📞</span>
+                            +34 91 123 4567
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-gold">✉️</span>
+                            concierge@elixirorigen.com
+                        </li>
+                        <li class="pt-2 text-xs">
+                            Horario: Lun-Sab 10:00 - 20:00
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-600 text-xs">
+                    © 2024 Elixir & Origen. Todos los derechos reservados.
+                </p>
+                <div class="flex space-x-6 text-xs text-gray-600">
+                    <a href="#" class="hover:text-gold transition-colors">Política de Privacidad</a>
+                    <a href="#" class="hover:text-gold transition-colors">Términos de Servicio</a>
+                    <a href="#" class="hover:text-gold transition-colors">Aviso Legal</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Hide loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+                
+                // Animate hero elements
+                gsap.to('#hero-subtitle', { opacity: 1, y: 0, duration: 1, delay: 0.5 });
+                gsap.to('#hero-title', { opacity: 1, y: 0, duration: 1, delay: 0.7 });
+                gsap.to('#hero-desc', { opacity: 1, y: 0, duration: 1, delay: 0.9 });
+                gsap.to('#hero-cta', { opacity: 1, y: 0, duration: 1, delay: 1.1 });
+            }, 1500);
+        });
+
+        // Navigation scroll effect
+        let lastScroll = 0;
+        const navbar = document.getElementById('navbar');
+        
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                navbar.classList.add('shadow-2xl');
+            } else {
+                navbar.classList.remove('shadow-2xl');
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // Mobile menu toggle
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // GSAP ScrollTrigger animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Animate product cards
+        gsap.utils.toArray('.product-card').forEach((card, i) => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                },
+                y: 50,
+                opacity: 0,
+                duration: 0.8,
+                delay: i * 0.2
+            });
+        });
+
+        // Magnetic button effect
+        document.querySelectorAll('.magnetic-btn').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+            });
+            
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translate(0, 0)';
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    // Close mobile menu if open
+                    document.getElementById('mobileMenu').classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
